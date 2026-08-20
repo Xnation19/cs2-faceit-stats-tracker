@@ -5,38 +5,41 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Nickname is required" });
   }
 
-  const apiKey = process.env.FACEIT_API_KEY;
+  // Retrieve environment variable
+  const apiKey = process.env.FACEIT_API_KEY ? process.env.FACEIT_API_KEY.trim() : null;
 
   if (!apiKey) {
-    return res.status(500).json({ error: "API key is missing on Vercel" });
+    return res.status(500).json({ error: "FACEIT_API_KEY is missing in Vercel settings" });
   }
 
   try {
-    // 1. Fetch Player Details
+    // 1. Fetch Player Profile
     const playerRes = await fetch(
       `https://open.faceit.com/data/v4/players?nickname=${encodeURIComponent(nickname)}`,
       {
         headers: {
-          Authorization: `Bearer ${apiKey}`,
-          accept: "application/json",
-        },
+          'accept': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        }
       }
     );
 
     if (!playerRes.ok) {
-      return res.status(playerRes.status).json({ error: "Player not found!" });
+      const errText = await playerRes.text();
+      console.error(`FACEIT Profile Error (${playerRes.status}):`, errText);
+      return res.status(playerRes.status).json({ error: `Player '${nickname}' not found.` });
     }
 
-    const playerData = await playerRes.parse ? await playerRes.parse() : await playerRes.json();
+    const playerData = await playerRes.json();
 
-    // 2. Fetch CS2 Stats using player_id
+    // 2. Fetch CS2 Stats
     const statsRes = await fetch(
       `https://open.faceit.com/data/v4/players/${playerData.player_id}/stats/cs2`,
       {
         headers: {
-          Authorization: `Bearer ${apiKey}`,
-          accept: "application/json",
-        },
+          'accept': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        }
       }
     );
 
@@ -44,9 +47,10 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       profile: playerData,
-      stats: statsData,
+      stats: statsData
     });
   } catch (err) {
-    return res.status(500).json({ error: "Server error fetching data" });
+    console.error("Server Error:", err);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 }

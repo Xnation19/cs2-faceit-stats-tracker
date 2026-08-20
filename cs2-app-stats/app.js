@@ -66,12 +66,16 @@ document.addEventListener('DOMContentLoaded', () => {
         statsData = statsRes.ok ? await statsRes.json() : null;
 
       } else {
-        const response = await fetch(`/api/player?nickname=${nickname}`);
-        if (!response.ok) throw new Error("Player not found!");
+        // Ensure there is a leading slash '/' before api/player
+const response = await fetch(`/api/player?nickname=${encodeURIComponent(nickname)}`);
         const data = await response.json();
+        if (!response.ok) throw new Error("Player not found!");
+        if (!response.ok) {
+  alert(data.error || "Player not found!");
+  return;
         profileData = data.profile;
         statsData = data.stats;
-      }
+      } }
 
       const cs2Data = profileData.games?.cs2;
       if (!cs2Data) return alert("No CS2 profile linked!");
