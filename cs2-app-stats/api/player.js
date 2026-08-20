@@ -5,16 +5,16 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Nickname is required" });
   }
 
-  // Retrieve environment variable
-  const apiKey = process.env.FACEIT_API_KEY ? process.env.FACEIT_API_KEY.trim() : null;
+  // Strip accidental quotes, spaces, or line breaks from key
+  const apiKey = (process.env.FACEIT_API_KEY || "").replace(/['"\s]/g, "");
 
   if (!apiKey) {
     return res.status(500).json({ error: "FACEIT_API_KEY is missing in Vercel settings" });
   }
 
   try {
-    // 1. Fetch Player Profile
-    const playerRes = await fetch(
+    // Attempt standard Authorization header
+    let response = await fetch(
       `https://open.faceit.com/data/v4/players?nickname=${encodeURIComponent(nickname)}`,
       {
         headers: {
@@ -24,33 +24,30 @@ export default async function handler(req, res) {
       }
     );
 
-    if (!playerRes.ok) {
-      const errText = await playerRes.text();
-      console.error(`FACEIT Profile Error (${playerRes.status}):`, errText);
-      return res.status(playerRes.status).json({ error: `Player '${nickname}' not found.` });
+    // If 400/401, retry using alternative key header
+    if (response.status === 400 || response.status === 401) {
+      response = await fetch(
+        `https://open.faceit.com/data/v4/players?nickname=${encodeURIComponent(nickname)}`,
+        {
+          headers: {
+            'accept': 'application/json',
+            'Authorization': `Key ${apiKey}`
+          }
+        }
+      );
     }
 
-    const playerData = await playerRes.json();
+    const data = await response.json();
 
-    // 2. Fetch CS2 Stats
-    const statsRes = await fetch(
-      `https://open.faceit.com/data/v4/players/${playerData.player_id}/stats/cs2`,
-      {
-        headers: {
-          'accept': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        }
-      }
-    );
+    if (!response.ok) {
+      return res.status(response.status).json({
+        error: data.message || `FACEIT API Error ${response.status}`,
+        details: data
+      });
+    }
 
-    const statsData = statsRes.ok ? await statsRes.json() : null;
-
-    return res.status(200).json({
-      profile: playerData,
-      stats: statsData
-    });
+    return res.status(200).json({ profile: data, stats: null });
   } catch (err) {
-    console.error("Server Error:", err);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }
