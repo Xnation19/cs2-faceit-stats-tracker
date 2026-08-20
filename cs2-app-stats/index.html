@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CS2 Analytics Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="app.js" defer></script>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Top Navigation Header with Recruiter Link -->
+    <header class="navbar">
+      <div class="logo">
+        <span class="logo-icon">🎯</span>
+        <h1>CS2<span>ANALYTICS</span></h1>
+      </div>
+      <div class="nav-actions">
+        <!-- Recruiter Button linking to index2.html -->
+        <a href="index2.html" class="btn-secondary nav-link">👨‍💻 About Developer</a>
+        <button id="theme-toggle" class="btn-secondary">☀️ Light Mode</button>
+      </div>
+    </header>
+
+    <!-- Search Section -->
+    <section class="search-section">
+      <div class="search-bar">
+        <input type="text" id="username-input" placeholder="Enter FACEIT Nickname..." value="m0NESY">
+        <button id="search-btn" class="btn-primary">FETCH STATS</button>
+      </div>
+    </section>
+
+    <!-- Main Player Card -->
+    <main id="profile-card" class="card">
+      <div class="player-banner">
+        <img id="player-avatar" src="https://placehold.co/100x100/1c2330/8b98a5?text=Avatar" alt="Avatar">
+        <div class="player-identity">
+          <h2 id="player-nickname">Player Name</h2>
+          <div class="badges">
+            <span id="player-country" class="badge">EU</span>
+            <span id="player-level-badge" class="badge badge-lvl10">Level --</span>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <span class="stat-label">FACEIT ELO</span>
+          <span id="stat-elo" class="stat-value">---</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Matches Played</span>
+          <span id="stat-matches" class="stat-value">---</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Average K/D Ratio</span>
+          <span id="stat-kd" class="stat-value">---</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Headshot %</span>
+          <span id="stat-hs" class="stat-value">---</span>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+</body>
+</html>
