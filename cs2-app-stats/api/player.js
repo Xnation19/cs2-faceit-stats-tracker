@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Nickname is required" });
   }
 
-  // Strip accidental quotes, spaces, or line breaks from key
+  // Clean the API key of any accidental whitespace or quotes
   const apiKey = (process.env.FACEIT_API_KEY || "").replace(/['"\s]/g, "");
 
   if (!apiKey) {
@@ -13,41 +13,60 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Attempt standard Authorization header
-    let response = await fetch(
+    // 1. Fetch Player Profile Details
+    let playerRes = await fetch(
       `https://open.faceit.com/data/v4/players?nickname=${encodeURIComponent(nickname)}`,
       {
         headers: {
-          'accept': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        }
+          accept: "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
       }
     );
 
-    // If 400/401, retry using alternative key header
-    if (response.status === 400 || response.status === 401) {
-      response = await fetch(
+    // Fallback auth header if standard Bearer token is rejected
+    if (playerRes.status === 400 || playerRes.status === 401) {
+      playerRes = await fetch(
         `https://open.faceit.com/data/v4/players?nickname=${encodeURIComponent(nickname)}`,
         {
           headers: {
-            'accept': 'application/json',
-            'Authorization': `Key ${apiKey}`
-          }
+            accept: "application/json",
+            Authorization: `Key ${apiKey}`,
+          },
         }
       );
     }
 
-    const data = await response.json();
+    const playerData = await playerRes.json();
 
-    if (!response.ok) {
-      return res.status(response.status).json({
-        error: data.message || `FACEIT API Error ${response.status}`,
-        details: data
+    if (!playerRes.ok) {
+      return res.status(playerRes.status).json({
+        error: playerData.message || `Player '${nickname}' not found.`,
       });
     }
 
-    return res.status(200).json({ profile: data, stats: null });
+    // 2. Fetch CS2 Lifetime Stats using player_id
+    let statsData = null;
+    if (playerData.player_id) {
+      const statsRes = await fetch(
+        `https://open.faceit.com/data/v4/players/${playerData.player_id}/stats/cs2`,
+        {
+          headers: {
+            accept: "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+        }
+      );
+      if (statsRes.ok) {
+        statsData = await statsRes.json();
+      }
+    }
+
+    return res.status(200).json({
+      profile: playerData,
+      stats: statsData,
+    });
   } catch (err) {
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error fetching player data" });
   }
 }

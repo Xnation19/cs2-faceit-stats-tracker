@@ -1,111 +1,79 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // 1. Elements
-  const themeToggleBtn = document.getElementById('theme-toggle');
-  const searchBtn = document.getElementById('search-btn');
-  const usernameInput = document.getElementById('username-input');
+document.addEventListener("DOMContentLoaded", () => {
+  const searchBtn = document.getElementById("search-btn") || document.querySelector("button");
+  const nicknameInput = document.getElementById("nickname-input") || document.querySelector("input");
 
-  const playerAvatar = document.getElementById('player-avatar');
-  const playerNickname = document.getElementById('player-nickname');
-  const playerCountry = document.getElementById('player-country');
-  const playerLevelBadge = document.getElementById('player-level-badge');
-  const statElo = document.getElementById('stat-elo');
-  const statMatches = document.getElementById('stat-matches');
-  const statKd = document.getElementById('stat-kd');
-  const statHs = document.getElementById('stat-hs');
-
-  // 2. Theme Toggle Setup
-  const htmlElement = document.documentElement;
-  const savedTheme = localStorage.getItem('theme') || 'dark';
-  
-  htmlElement.setAttribute('data-theme', savedTheme);
-
-  if (themeToggleBtn) {
-    // Set initial button label based on active theme
-    themeToggleBtn.textContent = savedTheme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
-
-    themeToggleBtn.addEventListener('click', () => {
-      const currentTheme = htmlElement.getAttribute('data-theme') || 'dark';
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-      htmlElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
-      themeToggleBtn.textContent = newTheme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
-    });
-  }
-
-  // 3. Search Listener (Guard clause prevents errors on index2.html)
-  if (searchBtn && usernameInput) {
-    searchBtn.addEventListener('click', () => {
-      const username = usernameInput.value.trim();
-      if (!username) return alert("Enter a username!");
-      fetchPlayerData(username);
-    });
-  }
-
-  // 4. Fetch Stats Function
-  async function fetchPlayerData(nickname) {
-    searchBtn.textContent = "LOADING...";
-    searchBtn.disabled = true;
-
-    try {
-      let profileData, statsData;
-      const isLocalhost = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
-
-      if (isLocalhost) {
-        const API_KEY = "d304ccc8-c283-4520-8881-60c2a25cf7e2";
-
-        const profileRes = await fetch(`https://open.faceit.com/data/v4/players?nickname=${nickname}`, {
-          headers: { 'Authorization': `Bearer ${API_KEY}`, 'Accept': 'application/json' }
-        });
-        if (!profileRes.ok) throw new Error("Player not found!");
-        profileData = await profileRes.json();
-
-        const statsRes = await fetch(`https://open.faceit.com/data/v4/players/${profileData.player_id}/stats/cs2`, {
-          headers: { 'Authorization': `Bearer ${API_KEY}`, 'Accept': 'application/json' }
-        });
-        statsData = statsRes.ok ? await statsRes.json() : null;
-
-      } else {
-        // Ensure there is a leading slash '/' before api/player
-const response = await fetch(`/api/player?nickname=${encodeURIComponent(nickname)}`);
-        const data = await response.json();
-        if (!response.ok) throw new Error("Player not found!");
-        if (!response.ok) {
-  alert(data.error || "Player not found!");
-  return;
-        profileData = data.profile;
-        statsData = data.stats;
-      } }
-
-      const cs2Data = profileData.games?.cs2;
-      if (!cs2Data) return alert("No CS2 profile linked!");
-
-      // Update UI Elements
-      playerNickname.textContent = profileData.nickname;
-      playerAvatar.src = profileData.avatar || "https://via.placeholder.com/100";
-      playerAvatar.alt = `${profileData.nickname}'s avatar`;
-      playerCountry.textContent = profileData.country ? profileData.country.toUpperCase() : "N/A";
-      playerLevelBadge.textContent = `Level ${cs2Data.skill_level || '-'}`;
-      statElo.textContent = cs2Data.faceit_elo ? cs2Data.faceit_elo.toLocaleString() : "N/A";
-
-      if (statsData && statsData.lifetime) {
-        const lifetime = statsData.lifetime;
-        statMatches.textContent = lifetime['Matches'] || 'N/A';
-        statKd.textContent = lifetime['Average K/D Ratio'] || 'N/A';
-        
-        const hsPercent = lifetime['Average Headshots %'];
-        statHs.textContent = hsPercent ? `${hsPercent}%` : 'N/A';
-      } else {
-        statMatches.textContent = 'N/A';
-        statKd.textContent = 'N/A';
-        statHs.textContent = 'N/A';
+  if (searchBtn) {
+    searchBtn.addEventListener("click", () => {
+      const nickname = nicknameInput.value.trim();
+      if (nickname) {
+        fetchPlayerStats(nickname);
       }
+    });
+  }
 
-    } catch (error) {
-      alert(error.message || "Error fetching data.");
-    } finally {
-      searchBtn.textContent = "FETCH STATS";
-      searchBtn.disabled = false;
-    }
+  if (nicknameInput) {
+    nicknameInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        const nickname = nicknameInput.value.trim();
+        if (nickname) {
+          fetchPlayerStats(nickname);
+        }
+      }
+    });
   }
 });
+
+async function fetchPlayerStats(nickname) {
+  try {
+    // Relative API call with leading slash and question mark
+    const response = await fetch(`/api/player?nickname=${encodeURIComponent(nickname)}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || "Player not found!");
+      return;
+    }
+
+    renderPlayerUI(data.profile, data.stats);
+  } catch (error) {
+    console.error("Fetch Error:", error);
+    alert("Error fetching player stats. Check console for details.");
+  }
+}
+
+function renderPlayerUI(profile, stats) {
+  if (!profile) return;
+
+  // Safely extract game data using optional chaining
+  const cs2 = profile.games?.cs2 || profile.games?.csgo;
+
+  // Update Profile Elements Safely
+  const avatarEl = document.getElementById("player-avatar") || document.querySelector(".avatar img");
+  const nameEl = document.getElementById("player-name") || document.querySelector(".player-name");
+  const levelEl = document.getElementById("player-level") || document.querySelector(".level");
+  const eloEl = document.getElementById("player-elo") || document.querySelector(".elo");
+
+  if (avatarEl) avatarEl.src = profile.avatar || "https://via.placeholder.com/150";
+  if (nameEl) nameEl.textContent = profile.nickname || "Unknown Player";
+
+  if (cs2) {
+    if (levelEl) levelEl.textContent = `Level ${cs2.skill_level || "--"}`;
+    if (eloEl) eloEl.textContent = `${cs2.faceit_elo || "N/A"} ELO`;
+  } else {
+    if (levelEl) levelEl.textContent = "Level --";
+    if (eloEl) eloEl.textContent = "No CS2 Data";
+  }
+
+  // Update Stats Elements Safely
+  if (stats && stats.lifetime) {
+    const lifetime = stats.lifetime;
+    
+    const kdEl = document.getElementById("kd-ratio");
+    const winRateEl = document.getElementById("win-rate");
+    const matchesEl = document.getElementById("matches");
+
+    if (kdEl) kdEl.textContent = lifetime["Average K/D Ratio"] || "N/A";
+    if (winRateEl) winRateEl.textContent = `${lifetime["Win Rate %"] || 0}%`;
+    if (matchesEl) matchesEl.textContent = lifetime["Matches"] || "0";
+  }
+}
