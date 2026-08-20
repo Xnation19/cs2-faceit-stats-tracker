@@ -3,29 +3,25 @@ document.addEventListener("DOMContentLoaded", () => {
   const nicknameInput = document.getElementById("nickname-input") || document.querySelector("input");
 
   if (searchBtn) {
-    searchBtn.addEventListener("click", () => {
-      const nickname = nicknameInput.value.trim();
-      if (nickname) {
-        fetchPlayerStats(nickname);
-      }
-    });
+    searchBtn.addEventListener("click", () => handleSearch(nicknameInput));
   }
 
   if (nicknameInput) {
     nicknameInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        const nickname = nicknameInput.value.trim();
-        if (nickname) {
-          fetchPlayerStats(nickname);
-        }
-      }
+      if (e.key === "Enter") handleSearch(nicknameInput);
     });
   }
 });
 
+function handleSearch(inputElement) {
+  const nickname = inputElement ? inputElement.value.trim() : "";
+  if (nickname) {
+    fetchPlayerStats(nickname);
+  }
+}
+
 async function fetchPlayerStats(nickname) {
   try {
-    // Relative API call with leading slash and question mark
     const response = await fetch(`/api/player?nickname=${encodeURIComponent(nickname)}`);
     const data = await response.json();
 
@@ -34,27 +30,34 @@ async function fetchPlayerStats(nickname) {
       return;
     }
 
-    renderPlayerUI(data.profile, data.stats);
+    // Extract profile safely regardless of backend wrapper structure
+    const profile = data.profile || data;
+    const stats = data.stats || null;
+
+    if (!profile || typeof profile !== "object") {
+      alert("Invalid player data received.");
+      return;
+    }
+
+    renderPlayerUI(profile, stats);
   } catch (error) {
     console.error("Fetch Error:", error);
-    alert("Error fetching player stats. Check console for details.");
+    alert(`Error: ${error.message}`);
   }
 }
 
 function renderPlayerUI(profile, stats) {
-  if (!profile) return;
+  // Use optional chaining so missing properties never crash the UI
+  const cs2 = profile?.games?.cs2 || profile?.games?.csgo;
 
-  // Safely extract game data using optional chaining
-  const cs2 = profile.games?.cs2 || profile.games?.csgo;
-
-  // Update Profile Elements Safely
+  // DOM Elements
   const avatarEl = document.getElementById("player-avatar") || document.querySelector(".avatar img");
   const nameEl = document.getElementById("player-name") || document.querySelector(".player-name");
   const levelEl = document.getElementById("player-level") || document.querySelector(".level");
   const eloEl = document.getElementById("player-elo") || document.querySelector(".elo");
 
-  if (avatarEl) avatarEl.src = profile.avatar || "https://via.placeholder.com/150";
-  if (nameEl) nameEl.textContent = profile.nickname || "Unknown Player";
+  if (avatarEl) avatarEl.src = profile?.avatar || "https://via.placeholder.com/150";
+  if (nameEl) nameEl.textContent = profile?.nickname || "Unknown Player";
 
   if (cs2) {
     if (levelEl) levelEl.textContent = `Level ${cs2.skill_level || "--"}`;
@@ -64,7 +67,7 @@ function renderPlayerUI(profile, stats) {
     if (eloEl) eloEl.textContent = "No CS2 Data";
   }
 
-  // Update Stats Elements Safely
+  // Lifetime Stats
   if (stats && stats.lifetime) {
     const lifetime = stats.lifetime;
     
