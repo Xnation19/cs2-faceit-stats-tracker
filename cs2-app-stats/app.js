@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const searchBtn = document.getElementById("search-btn") || document.querySelector("button");
-  const nicknameInput = document.getElementById("nickname-input") || document.querySelector("input");
+  const searchBtn = document.getElementById("search-btn");
+  const nicknameInput = document.getElementById("username-input");
+  const themeToggle = document.getElementById("theme-toggle");
 
   if (searchBtn) {
     searchBtn.addEventListener("click", () => handleSearch(nicknameInput));
@@ -11,7 +12,36 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.key === "Enter") handleSearch(nicknameInput);
     });
   }
+
+  // --- Theme toggle ---
+  if (themeToggle) {
+    // Restore saved theme on load
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      document.documentElement.setAttribute("data-theme", savedTheme);
+      updateThemeButton(savedTheme);
+    }
+
+    themeToggle.addEventListener("click", () => {
+      const current = document.documentElement.getAttribute("data-theme") || "dark";
+      const next = current === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+      updateThemeButton(next);
+    });
+  }
+
+  // Auto-load default player on first visit (optional nicety)
+  if (nicknameInput && nicknameInput.value.trim()) {
+    handleSearch(nicknameInput);
+  }
 });
+
+function updateThemeButton(theme) {
+  const themeToggle = document.getElementById("theme-toggle");
+  if (!themeToggle) return;
+  themeToggle.textContent = theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode";
+}
 
 function handleSearch(inputElement) {
   const nickname = inputElement ? inputElement.value.trim() : "";
@@ -30,7 +60,6 @@ async function fetchPlayerStats(nickname) {
       return;
     }
 
-    // Extract profile safely regardless of backend wrapper structure
     const profile = data.profile || data;
     const stats = data.stats || null;
 
@@ -47,36 +76,40 @@ async function fetchPlayerStats(nickname) {
 }
 
 function renderPlayerUI(profile, stats) {
-  // Use optional chaining so missing properties never crash the UI
   const cs2 = profile?.games?.cs2 || profile?.games?.csgo;
 
-  // DOM Elements
-  const avatarEl = document.getElementById("player-avatar") || document.querySelector(".avatar img");
-  const nameEl = document.getElementById("player-name") || document.querySelector(".player-name");
-  const levelEl = document.getElementById("player-level") || document.querySelector(".level");
-  const eloEl = document.getElementById("player-elo") || document.querySelector(".elo");
+  // DOM elements — matching the actual IDs in index.html
+  const avatarEl = document.getElementById("player-avatar");
+  const nameEl = document.getElementById("player-nickname");
+  const countryEl = document.getElementById("player-country");
+  const levelBadgeEl = document.getElementById("player-level-badge");
+  const eloEl = document.getElementById("stat-elo");
+  const matchesEl = document.getElementById("stat-matches");
+  const kdEl = document.getElementById("stat-kd");
+  const hsEl = document.getElementById("stat-hs");
 
   if (avatarEl) avatarEl.src = profile?.avatar || "https://via.placeholder.com/150";
   if (nameEl) nameEl.textContent = profile?.nickname || "Unknown Player";
+  if (countryEl) countryEl.textContent = (profile?.country || "EU").toUpperCase();
 
   if (cs2) {
-    if (levelEl) levelEl.textContent = `Level ${cs2.skill_level || "--"}`;
-    if (eloEl) eloEl.textContent = `${cs2.faceit_elo || "N/A"} ELO`;
+    if (levelBadgeEl) levelBadgeEl.textContent = `Level ${cs2.skill_level ?? "--"}`;
+    if (eloEl) eloEl.textContent = cs2.faceit_elo ?? "N/A";
   } else {
-    if (levelEl) levelEl.textContent = "Level --";
+    if (levelBadgeEl) levelBadgeEl.textContent = "Level --";
     if (eloEl) eloEl.textContent = "No CS2 Data";
   }
 
-  // Lifetime Stats
+  // Lifetime stats
   if (stats && stats.lifetime) {
     const lifetime = stats.lifetime;
-    
-    const kdEl = document.getElementById("kd-ratio");
-    const winRateEl = document.getElementById("win-rate");
-    const matchesEl = document.getElementById("matches");
 
     if (kdEl) kdEl.textContent = lifetime["Average K/D Ratio"] || "N/A";
-    if (winRateEl) winRateEl.textContent = `${lifetime["Win Rate %"] || 0}%`;
     if (matchesEl) matchesEl.textContent = lifetime["Matches"] || "0";
+    if (hsEl) hsEl.textContent = `${lifetime["Average Headshots %"] || 0}%`;
+  } else {
+    if (kdEl) kdEl.textContent = "N/A";
+    if (matchesEl) matchesEl.textContent = "0";
+    if (hsEl) hsEl.textContent = "N/A";
   }
 }
