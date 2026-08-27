@@ -99,6 +99,44 @@ input {
   box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
 
+/* --- Loading & Error States --- */
+.hidden {
+  display: none !important;
+}
+
+.error-banner {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Spinner shown inside the button while a request is in flight */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .player-banner { display: flex; align-items: center; gap: 20px; }
 #player-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--accent-orange); object-fit: cover; }
 .badges { display: flex; gap: 8px; }

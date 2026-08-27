@@ -51,12 +51,15 @@ function handleSearch(inputElement) {
 }
 
 async function fetchPlayerStats(nickname) {
+  setLoadingState(true);
+  hideError();
+
   try {
     const response = await fetch(`/api/player?nickname=${encodeURIComponent(nickname)}`);
     const data = await response.json();
 
     if (!response.ok) {
-      alert(data.error || "Player not found!");
+      showError(data.error || "Player not found!");
       return;
     }
 
@@ -64,15 +67,48 @@ async function fetchPlayerStats(nickname) {
     const stats = data.stats || null;
 
     if (!profile || typeof profile !== "object") {
-      alert("Invalid player data received.");
+      showError("Invalid player data received.");
       return;
     }
 
     renderPlayerUI(profile, stats);
   } catch (error) {
     console.error("Fetch Error:", error);
-    alert(`Error: ${error.message}`);
+    showError("Network error — check your connection and try again.");
+  } finally {
+    setLoadingState(false);
   }
+}
+
+// Toggles the search button between its idle and "in flight" appearance.
+// isLoading is a boolean, so this same function handles both directions.
+function setLoadingState(isLoading) {
+  const searchBtn = document.getElementById("search-btn");
+  if (!searchBtn) return;
+
+  if (isLoading) {
+    // Save the original label so we can restore it exactly, rather than
+    // hardcoding "FETCH STATS" a second time somewhere else.
+    searchBtn.dataset.originalText = searchBtn.textContent;
+    searchBtn.disabled = true;
+    searchBtn.innerHTML = `<span class="spinner"></span> Searching...`;
+  } else {
+    searchBtn.disabled = false;
+    searchBtn.textContent = searchBtn.dataset.originalText || "FETCH STATS";
+  }
+}
+
+function showError(message) {
+  const banner = document.getElementById("error-banner");
+  if (!banner) return;
+  banner.textContent = message;
+  banner.classList.remove("hidden");
+}
+
+function hideError() {
+  const banner = document.getElementById("error-banner");
+  if (!banner) return;
+  banner.classList.add("hidden");
 }
 
 function renderPlayerUI(profile, stats) {
