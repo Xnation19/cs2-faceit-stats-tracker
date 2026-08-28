@@ -48,6 +48,7 @@ body {
 
 .app-container { width: 100%; max-width: 680px; }
 .navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+.nav-actions { display: flex; align-items: center; gap: 10px; }
 .logo { display: flex; align-items: center; gap: 10px; }
 .logo h1 { font-size: 20px; font-weight: 800; margin: 0; }
 .logo h1 span { color: var(--accent-orange); }
@@ -160,6 +161,11 @@ a {
   flex-wrap: wrap; 
 }
 
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
 
 
 /* --- Developer Portfolio Styles (index2.html) --- */
@@ -260,10 +266,104 @@ a {
   font-weight: 600;
 }
 
+/* ===================================================================
+   RESPONSIVE BREAKPOINTS
+   660px = tablets / small laptops / phones in landscape.
+   380px = small phones in portrait (the ones that need extra care).
+   ================================================================= */
+
 @media (max-width: 660px) {
   /* for laptops and tablets so it does square up  */
+  body {
+    padding: 20px 12px;
+  }
+
+  .navbar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .nav-actions {
+    width: 100%;
+  }
+
+  .nav-actions .nav-link {
+    flex: 1;
+    text-align: center;
+  }
+
+  .search-bar {
+    flex-direction: column;
+  }
+
+  .btn-primary {
+    width: 100%;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .player-banner {
+    gap: 14px;
+  }
+
+  #player-avatar {
+    width: 64px;
+    height: 64px;
+  }
+
+  .player-identity h2 {
+    font-size: 18px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .stat-box {
+    padding: 12px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+  }
+
+  .dev-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .dev-meta {
+    justify-content: center;
+  }
+
+  .dev-title-row {
+    justify-content: center;
+  }
+
+  .action-footer {
+    flex-direction: column;
+  }
+
+  .action-footer .link-btn {
+    justify-content: center;
+    text-align: center;
+  }
 }
 
 @media (max-width: 380px) {
   /* very smol phones :> */
+  .logo h1 {
+    font-size: 16px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .badges {
+    flex-wrap: wrap;
+  }
 }
