@@ -8,8 +8,6 @@
   --border-color: #273142;
   --radius-lg: 16px;
   --radius-sm: 8px;
-  
-  /* 1. Global smooth transition speed */
   --transition-speed: 0.35s ease-in-out;
 }
 
@@ -22,16 +20,9 @@
   --border-color: #e2e8f0;
 }
 
-/* 2. Apply smooth transition to all color-changing elements */
-body, 
-.card, 
-.stat-box, 
-input, 
-.btn-secondary, 
-.badge, 
-.divider {
-  transition: background-color var(--transition-speed), 
-              color var(--transition-speed), 
+body, .card, .stat-box, input, .btn-secondary, .badge, .divider {
+  transition: background-color var(--transition-speed),
+              color var(--transition-speed),
               border-color var(--transition-speed),
               box-shadow var(--transition-speed);
 }
@@ -53,57 +44,52 @@ body {
 .logo h1 { font-size: 20px; font-weight: 800; margin: 0; }
 .logo h1 span { color: var(--accent-orange); }
 
-.btn-secondary { 
-  background: transparent; 
-  border: 1px solid var(--border-color); 
-  color: var(--text-primary); 
-  padding: 8px 16px; 
-  border-radius: var(--radius-sm); 
-  font-weight: 600; 
-  cursor: pointer; 
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .search-section { margin-bottom: 24px; }
 .search-bar { display: flex; gap: 12px; }
 
-input { 
-  flex: 1; 
-  padding: 14px 18px; 
-  border-radius: var(--radius-sm); 
-  border: 1px solid var(--border-color); 
-  background: var(--card-bg); 
-  color: var(--text-primary); 
-  font-size: 15px; 
-  outline: none; 
+input {
+  flex: 1;
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font-size: 15px;
+  outline: none;
 }
 
-.btn-primary { 
-  background-color: var(--accent-orange); 
-  color: #fff; 
-  border: none; 
-  padding: 14px 24px; 
-  border-radius: var(--radius-sm); 
-  font-weight: 700; 
-  cursor: pointer; 
+.btn-primary {
+  background-color: var(--accent-orange);
+  color: #fff;
+  border: none;
+  padding: 14px 24px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  cursor: pointer;
   transition: transform 0.1s ease, background-color 0.2s ease;
 }
 
-.btn-primary:active {
-  transform: scale(0.97);
-}
+.btn-primary:active { transform: scale(0.97); }
 
-.card { 
-  background-color: var(--card-bg); 
-  border: 1px solid var(--border-color); 
-  border-radius: var(--radius-lg); 
-  padding: 28px; 
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 28px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
 
-/* --- Loading & Error States --- */
-.hidden {
-  display: none !important;
-}
+.hidden { display: none !important; }
 
 .error-banner {
   margin-top: 12px;
@@ -116,7 +102,6 @@ input {
   font-weight: 600;
 }
 
-/* Spinner shown inside the button while a request is in flight */
 .spinner {
   display: inline-block;
   width: 14px;
@@ -129,14 +114,9 @@ input {
   vertical-align: middle;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-.btn-primary:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
+.btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
 
 .player-banner { display: flex; align-items: center; gap: 20px; }
 #player-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--accent-orange); object-fit: cover; }
@@ -148,38 +128,15 @@ input {
 .stat-box { background: var(--box-bg); padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); text-align: center; }
 .stat-label { display: block; font-size: 13px; color: var(--text-secondary); font-weight: 600; margin-bottom: 6px; }
 .stat-value { font-size: 24px; font-weight: 800; color: var(--text-primary); }
-#stat-elo { color: var(--accent-orange); } 
+#stat-elo { color: var(--accent-orange); }
 
-a {
-  text-decoration: none;
-}
+a { text-decoration: none; }
 
+.action-footer { display: flex; gap: 12px; flex-wrap: wrap; }
+.link-btn { display: inline-flex; align-items: center; gap: 8px; }
 
-.action-footer {
-  display: flex;
-  gap: 12px; 
-  flex-wrap: wrap; 
-}
-
-.link-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-
-/* --- Developer Portfolio Styles (index2.html) --- */
-.dev-card {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.dev-header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
+.dev-card { display: flex; flex-direction: column; gap: 16px; }
+.dev-header { display: flex; align-items: center; gap: 20px; }
 
 .dev-avatar-container {
   position: relative;
@@ -204,166 +161,39 @@ a {
   border-radius: 50%;
 }
 
-.dev-title-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.dev-title-row h2 {
-  margin: 0;
-  font-size: 20px;
-}
-
-.badge-recruiter {
-  background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
-  border: 1px solid #10b981;
-}
-
-.dev-meta {
-  display: flex;
-  gap: 12px;
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-top: 6px;
-  flex-wrap: wrap;
-}
-
-.dev-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
-}
-
-.dev-box {
-  background: var(--box-bg);
-  padding: 18px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
-}
-
-.dev-box h3 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 15px;
-}
-
-.tech-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.tech-tag {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* ===================================================================
-   RESPONSIVE BREAKPOINTS
-   660px = tablets / small laptops / phones in landscape.
-   380px = small phones in portrait (the ones that need extra care).
-   ================================================================= */
+.dev-title-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.dev-title-row h2 { margin: 0; font-size: 20px; }
+.badge-recruiter { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; }
+.dev-meta { display: flex; gap: 12px; font-size: 13px; color: var(--text-secondary); margin-top: 6px; flex-wrap: wrap; }
+.dev-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.dev-box { background: var(--box-bg); padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); }
+.dev-box h3 { margin-top: 0; margin-bottom: 10px; font-size: 15px; }
+.tech-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tech-tag { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-primary); padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; }
 
 @media (max-width: 660px) {
-  /* for laptops and tablets so it does square up  */
-  body {
-    padding: 20px 12px;
-  }
-
-  .navbar {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .nav-actions {
-    width: 100%;
-  }
-
-  .nav-actions .nav-link {
-    flex: 1;
-    text-align: center;
-  }
-
-  .search-bar {
-    flex-direction: column;
-  }
-
-  .btn-primary {
-    width: 100%;
-  }
-
-  .card {
-    padding: 20px;
-  }
-
-  .player-banner {
-    gap: 14px;
-  }
-
-  #player-avatar {
-    width: 64px;
-    height: 64px;
-  }
-
-  .player-identity h2 {
-    font-size: 18px;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .stat-box {
-    padding: 12px;
-  }
-
-  .stat-value {
-    font-size: 20px;
-  }
-
-  .dev-header {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .dev-meta {
-    justify-content: center;
-  }
-
-  .dev-title-row {
-    justify-content: center;
-  }
-
-  .action-footer {
-    flex-direction: column;
-  }
-
-  .action-footer .link-btn {
-    justify-content: center;
-    text-align: center;
-  }
+  body { padding: 20px 12px; }
+  .navbar { flex-wrap: wrap; gap: 12px; }
+  .nav-actions { width: 100%; }
+  .nav-actions .nav-link { flex: 1; text-align: center; }
+  .search-bar { flex-direction: column; }
+  .btn-primary { width: 100%; }
+  .card { padding: 20px; }
+  .player-banner { gap: 14px; }
+  #player-avatar { width: 64px; height: 64px; }
+  .player-identity h2 { font-size: 18px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat-box { padding: 12px; }
+  .stat-value { font-size: 20px; }
+  .dev-header { flex-direction: column; text-align: center; }
+  .dev-meta { justify-content: center; }
+  .dev-title-row { justify-content: center; }
+  .action-footer { flex-direction: column; }
+  .action-footer .link-btn { justify-content: center; text-align: center; }
 }
 
 @media (max-width: 380px) {
-  /* very smol phones :> */
-  .logo h1 {
-    font-size: 16px;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .badges {
-    flex-wrap: wrap;
-  }
+  .logo h1 { font-size: 16px; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .badges { flex-wrap: wrap; }
 }
