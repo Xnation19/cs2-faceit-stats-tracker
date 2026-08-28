@@ -259,3 +259,11 @@ a {
   font-size: 12px;
   font-weight: 600;
 }
+
+@media (max-width: 660px) {
+  /* for laptops and tablets so it does square up  */
+}
+
+@media (max-width: 380px) {
+  /* very smol phones :> */
+}
