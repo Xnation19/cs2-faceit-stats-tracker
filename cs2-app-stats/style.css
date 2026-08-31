@@ -64,7 +64,7 @@ input {
   border: 1px solid var(--border-color);
   background: var(--card-bg);
   color: var(--text-primary);
-  font-size: 15px;
+  font-size: 16px;
   outline: none;
 }
 
@@ -76,7 +76,17 @@ input {
   border-radius: var(--radius-sm);
   font-weight: 700;
   cursor: pointer;
+  min-height: 44px;
   transition: transform 0.1s ease, background-color 0.2s ease;
+}
+
+.btn-secondary, .theme-toggle, #search-btn { min-height: 44px; }
+
+.player-identity h2 {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .btn-primary:active { transform: scale(0.97); }

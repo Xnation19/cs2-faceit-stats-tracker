@@ -124,7 +124,13 @@ function renderPlayerUI(profile, stats) {
   const kdEl = document.getElementById("stat-kd");
   const hsEl = document.getElementById("stat-hs");
 
-  if (avatarEl) avatarEl.src = profile?.avatar || "https://via.placeholder.com/150";
+  if (avatarEl) {
+    avatarEl.src = profile?.avatar || "https://placehold.co/100x100/1c2330/8b98a5?text=Avatar";
+    avatarEl.onerror = () => {
+      avatarEl.onerror = null;
+      avatarEl.src = "https://placehold.co/100x100/1c2330/8b98a5?text=Avatar";
+    };
+  }
   if (nameEl) nameEl.textContent = profile?.nickname || "Unknown Player";
   if (countryEl) countryEl.textContent = (profile?.country || "EU").toUpperCase();
 
