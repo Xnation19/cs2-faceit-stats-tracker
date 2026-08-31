@@ -41,5 +41,5 @@ Built as a portfolio project to demonstrate:
 
 ## Notes
 
-- The FACEIT API key lives only in the serverless function's environment variables — it is never sent to the browser.
+- The FACEIT API key lives only in the serverless function's environment variables it is never sent to the browser.
 - `player.js` needs to live in an `/api` folder for Vercel to pick it up as a serverless function.
