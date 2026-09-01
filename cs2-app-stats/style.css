@@ -162,7 +162,12 @@ input {
 
 a { text-decoration: none; }
 
-.action-footer { display: flex; gap: 12px; flex-wrap: wrap; }
+.action-footer {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px; /* Adds space at the bottom */
+}
 .link-btn { display: inline-flex; align-items: center; gap: 8px; }
 
 .dev-card { display: flex; flex-direction: column; gap: 16px; }
