@@ -1,6 +1,6 @@
 # CS2 Analytics Dashboard
 
-A stats tracker for the [FACEIT](https://www.faceit.com/) CS2 competitive platform. Enter a FACEIT nickname and get back live ELO, skill level, match count, K/D ratio, and headshot % — pulled straight from the FACEIT Data API.
+A stats tracker for the [FACEIT](https://www.faceit.com/) CS2 competitive platform. Enter a FACEIT nickname and get back live ELO, skill level, match count, K/D ratio, and headshot % gotten straight from the FACEIT Data API.
 
 **Live demo:** (https://project-faceit-app-ledn-45p1papya-pass1on.vercel.app/)
 
@@ -41,5 +41,5 @@ Built as a portfolio project to demonstrate:
 
 ## Notes
 
-- The FACEIT API key lives only in the serverless function's environment variables — it is never sent to the browser.
+- The FACEIT API key lives only in the serverless function's environment variables it is never sent to the browser.
 - `player.js` needs to live in an `/api` folder for Vercel to pick it up as a serverless function.
